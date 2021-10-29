@@ -1,0 +1,81 @@
+{% extends "base.html"%}
+
+{% block title %}Analysis{% endblock %}
+{% block body %}
+    <div class="content" style="margin-top: 86px; margin-right: 50px; margin-left: 50px;">
+        <h1>Analysis Examples</h1>
+        <p>Since the project is only done in a short time period (no more than one week), the data retrieved by the web scrapper is only limited to data in October, including the date_dim. Thus, there might not be a big difference tables shown below.</p>
+        <br>
+
+        <h3>Average Rating per Game</h3>
+        <div class="container-fluid">
+                {% if avg_rating|length < 1 %}
+                    <h3>There is no data available</h3>
+                {% else %}
+                    <table class="table table-striped">
+                        <thead>
+                            <th>Game</th>
+                            <th>Average Rating</th>
+                            <th>Total Reviewers</th>
+                        </thead>
+                        <tbody>
+                            {% for rating in avg_rating %}
+                            <tr>
+                                <td>{{ rating.name }}</td>
+                                <td>{{ rating['Average Rating']}}</td>
+                                <td>{{ rating['Total Reviewers']}}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% endif %}
+        </div>
+        <br>
+
+        <h3>Average Developer Rating based on Ratings in October</h3>
+        <div class="container-fluid">
+            {% if avg_developer|length < 1 %}
+                <h3>There is no data available</h3>
+            {% else %}
+                <table class="table table-striped">
+                    <thead>
+                        <th>Developer</th>
+                        <th>Average Rating</th>
+                    </thead>
+                    <tbody>
+                        {% for developer in avg_developer %}
+                        <tr>
+                            <td>{{ developer.name }}</td>
+                            <td>{{ developer['Average Rating']}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
+        </div>
+        <br>
+
+        <h3>Total Reviewers for Each Game in October</h3>
+        <div class="container-fluid">
+            {% if month_total|length < 1 %}
+                <h3>There is no data available</h3>
+            {% else %}
+                <table class="table table-striped">
+                    <thead>
+                        <th>Game</th>
+                        <th>Total Reviewers</th>
+                    </thead>
+                    <tbody>
+                        {% for game in month_total %}
+                        <tr>
+                            <td>{{ game.name }}</td>
+                            <td>{{ game['Total Reviewers']}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
+        </div>
+        <br>
+    </div>
+{% endblock %}
