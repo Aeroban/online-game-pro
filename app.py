@@ -1,3 +1,4 @@
+from cmath import e
 from os import error
 from flask import Flask, render_template, url_for, request, redirect
 from flask_sqlalchemy import SQLAlchemy
@@ -142,7 +143,9 @@ class Review(db.Model):
 
 # Other method---------------------------
 def init_dates(df_path:str = 'DateFill.csv'):
-        date_df = pd.read_csv(df_path)
+        date_df = pd.read_csv(df_path,sep=';')
+
+        print(date_df.columns)
         
         for index, row in date_df.iterrows():
             new_year = row['year']
@@ -155,8 +158,9 @@ def init_dates(df_path:str = 'DateFill.csv'):
             try:
                 db.session.add(new_date)
                 db.session.commit()
-            except:
+            except e:
                 print('Error in adding date')
+                print(e)
 
 def add_game():
     game_dict, review_list, game_cat_list = game_scrap.link_input()
@@ -289,12 +293,14 @@ def index():
 def show_analysis():
     avg_rating = db.session.query(Game.name, func.avg(Review.rating).label('Average Rating'),func.count(Review.rating).label('Total Reviewers')).filter(Review.game_key == Game.key).group_by(Game.key, Game.name).order_by(func.avg(Review.rating).desc()).all()
 
-    avg_developer = db.session.query(Developer.name, func.avg(Review.rating).label('Average Rating')).filter(Review.game_key == Game.key, Game.developer_key == Developer.key, Review.date_key == Date.key, Date.month_name == 'October').group_by(Developer.key, Developer.name).order_by(func.avg(Review.rating).desc()).all()
+    avg_developer = db.session.query(Developer.name, func.avg(Review.rating).label('Average Rating')).filter(Review.game_key == Game.key, Game.developer_key == Developer.key, Review.date_key == Date.key, Date.month_name == 'May').group_by(Developer.key, Developer.name).order_by(func.avg(Review.rating).desc()).all()
 
-    month_total = db.session.query(Game.name, func.count(User.key).label('Total Reviewers')).filter(Review.game_key == Game.key, Review.user_key == User.key, Review.date_key == Date.key, Date.month_name == 'October').group_by(Game.key, Game.name).order_by(func.count(User.key).desc()).all()
+    month_total = db.session.query(Game.name, func.count(User.key).label('Total Reviewers')).filter(Review.game_key == Game.key, Review.user_key == User.key, Review.date_key == Date.key, Date.month_name == 'May').group_by(Game.key, Game.name).order_by(func.count(User.key).desc()).all()
 
     return render_template('analysis.html', avg_rating = avg_rating, avg_developer = avg_developer, month_total = month_total)
 
 
 if __name__ == '__main__':
+    # game_scrap = GameScrapper()
+    # add_game()
     app.run(debug=True)

@@ -29,12 +29,13 @@ class GameScrapper:
         game_release = soup.find('div', class_='date').text.strip()
         game_dev = soup.find('div', id='developers_list').a.text.strip()
         game_cat = soup.find('div', id='genresAndManufacturer')
+        game_cat = game_cat.find('span')
         game_cat = game_cat.find_all('a')
         game_cat_list = []
 
         for cat in game_cat:
-            if(cat.parent.get('id') == 'genresAndManufacturer'):
-                game_cat_list.append(cat.text)
+            # if(cat.parent.get('id') == 'genresAndManufacturer'):
+            game_cat_list.append(cat.text)
 
         game_dict = {'id':game_id, 'name':game_name, 'release':game_release, 'developer':game_dev, 'category':game_cat}
 
