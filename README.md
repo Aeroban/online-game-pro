@@ -67,8 +67,9 @@ Example files such as the sql data and the date fill can be found inside the pro
 
 <h4> Screen shots </h4>
 <img src="https://user-images.githubusercontent.com/75673604/169320413-c9926559-84db-46e9-a581-eeaff5cc233d.png">
-![1](https://user-images.githubusercontent.com/75673604/169320413-c9926559-84db-46e9-a581-eeaff5cc233d.png)
-![2](https://user-images.githubusercontent.com/75673604/169320432-ab8d2a89-470d-4328-892c-1dfbbe26ff19.png)
+<br>
+<img src="https://user-images.githubusercontent.com/75673604/169320432-ab8d2a89-470d-4328-892c-1dfbbe26ff19.png">
+
 
 <h2> Linked in link:</h2>
 www.linkedin.com/in/gabriella-ryanie-setiawan-5893b3224
