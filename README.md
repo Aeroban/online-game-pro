@@ -60,10 +60,14 @@ For the game and review tables, it can be inserted using creating GameScrapper o
 The retrieved data are then validated to see if the row already exists by using the key. And then a model will be created and inserted into the database. For the review data, another validation will be done before inserting the data to check whether another review on the same game has been written before by the same user. If yes, change the current status of the older reviews into 0 (not current review) and add the newest review with current 1 (current review). This will enable the data analyst to see whether players change their mind after a certain time (before - after update) or not. However, please note that since the date_key is based on a single day, it means there could only be one review for one day and the current system does not support overwrite for the review (same game_key and player_key) on the same date. It will only apply append row if the review is from different day.
 
 <h4> Running the website </h4>
-After initializing and adding data into the databse, make sure to add app.run(debug=True) command in the app.py file. The file then can be run by typing py app.py in the command line.
+After initializing and adding data into the database, make sure to add app.run(debug=True) command in the app.py file. The file then can be run by typing py app.py in the command line.
 
 <h4> Example files </h4>
-Example files such as the sql data and the date fill can be found inside the project files. It can be used as testing purpose.
+Example files such as the sql data and the date fill can be found inside the project files (April and May 2022). It can be used as testing purpose.
+
+<h4> Screen shots </h4>
+![1](https://user-images.githubusercontent.com/75673604/169320413-c9926559-84db-46e9-a581-eeaff5cc233d.png)
+![2](https://user-images.githubusercontent.com/75673604/169320432-ab8d2a89-470d-4328-892c-1dfbbe26ff19.png)
 
 <h2> Linked in link:</h2>
 www.linkedin.com/in/gabriella-ryanie-setiawan-5893b3224
