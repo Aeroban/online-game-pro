@@ -162,6 +162,28 @@ def init_dates(df_path:str = 'DateFill.csv'):
                 print('Error in adding date')
                 print(e)
 
+def complete_dates():
+    latest_date = db.session.query(func.max(Date.key).label('last')).first()
+    curr_date = datetime.date.today()
+    print(f"Latest date in DB: {latest_date['last']}")
+    print(f"Current date: {datetime.date.strftime(curr_date, '%Y%m%d')}")
+    
+    latest_date = datetime.datetime.strptime(str(latest_date['last']), '%Y%m%d')
+    
+    while(latest_date.date() < curr_date):
+        latest_date = latest_date + datetime.timedelta(days=1)
+        new_row = Date(key = datetime.date.strftime(latest_date, '%Y%m%d'), year = latest_date.year, month=latest_date.month, month_name = latest_date.strftime("%B"), day = latest_date.day, day_of_week = latest_date.strftime("%A"), fulldate = latest_date.date())
+
+        try:
+            db.session.add(new_row)
+            db.session.commit()
+            print(f"Date {new_row.key} is added")
+        except e:
+            print("Error in adding date")
+            print(e)
+    
+    print("Date is up-to-date")
+    
 def add_game():
     game_dict, review_list, game_cat_list = game_scrap.link_input()
     input_game(game_dict,review_list, game_cat_list)
@@ -303,4 +325,5 @@ def show_analysis():
 if __name__ == '__main__':
     # game_scrap = GameScrapper()
     # add_game()
-    app.run(debug=True)
+    complete_dates()
+    # app.run(debug=True)
