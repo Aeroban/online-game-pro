@@ -1,6 +1,5 @@
 from cmath import e
-from os import error
-from flask import Flask, render_template, url_for, request, redirect
+from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.types import CHAR, TypeDecorator
 import datetime
@@ -325,5 +324,5 @@ def show_analysis():
 if __name__ == '__main__':
     # game_scrap = GameScrapper()
     # add_game()
-    complete_dates()
-    # app.run(debug=True)
+    # complete_dates()
+    app.run(debug=True)
