@@ -51,7 +51,7 @@ class User(db.Model):
     id = db.Column(db.Integer, unique = True, nullable = False)
     name = db.Column(db.String(255), nullable=False)
     link = db.Column(db.String(255), nullable=False)
-    reviews = db.relationship('Review', backref='user', lazy=True)
+    reviews = db.relationship('Review', backref='user', lazy=True, cascade="save-update")
 
     time_created = db.Column(db.DateTime(timezone=True), server_default=func.now())
     time_updated = db.Column(db.DateTime(timezone=True), onupdate=func.now())
@@ -60,8 +60,8 @@ class User(db.Model):
         return '<User %r> % self.fname'
 
 categories = db.Table('categories_game_fact',
-    db.Column('category_key', GUID(), db.ForeignKey('category_dim.key'), primary_key = True),
-    db.Column('game_key', GUID(), db.ForeignKey('game_dim.key'), primary_key = True),
+    db.Column('category_key', GUID(), db.ForeignKey('category_dim.key', ondelete="CASCADE"), primary_key = True),
+    db.Column('game_key', GUID(), db.ForeignKey('game_dim.key', ondelete="CASCADE"), primary_key = True),
     db.Column('time_created',db.DateTime(timezone=True), server_default=func.now()),
     db.Column('time_updated',db.DateTime(timezone=True), onupdate=func.now())
 )
@@ -85,10 +85,11 @@ class Game(db.Model):
     name = db.Column(db.String(255), nullable = False)
 
     # Many-to-Many game_dim (parent) * - * category_dim (child)
-    categories = db.relationship('Category', secondary = categories, lazy='subquery', backref = db.backref('games', lazy=True))
-    developer_key = db.Column(GUID(), db.ForeignKey('developer_dim.key'), nullable=False)
+    categories = db.relationship('Category', secondary = categories, lazy='subquery' ,backref = db.backref('games', lazy=True))
+    developer_key = db.Column(GUID(), db.ForeignKey('developer_dim.key', ondelete="CASCADE"), nullable=False)
     release_key = db.Column(db.Integer, db.ForeignKey('date_dim.key'), nullable = False)
-    reviews = db.relationship('Review', backref='game', lazy=True)
+    reviews = db.relationship('Review', backref='game', lazy=True, cascade="all, delete-orphan")
+    # cascade=all, delete-orphan -> delete all reviews connected to the game
 
     time_created = db.Column(db.DateTime(timezone=True), server_default=func.now())
     time_updated = db.Column(db.DateTime(timezone=True), onupdate=func.now())
@@ -102,8 +103,8 @@ class Developer(db.Model):
     key = db.Column(GUID(), primary_key=True, default=lambda: str(uuid.uuid4()))
     id = db.Column(db.Integer, unique = True, nullable = False)
     name = db.Column(db.String(255), nullable = False)
-    # One to many ('target_model', backref='column_in_target_model', lazy = True (load data s necessary in one go))
-    games = db.relationship('Game', backref='developer', lazy=True)
+    # One to many ('target_model', backref='column_in_target_model', lazy = True (load data db necessary in one go))
+    games = db.relationship('Game', backref='developer', lazy=True, cascade="all, delete-orphan")
 
     time_created = db.Column(db.DateTime(timezone=True), server_default=func.now())
     time_updated = db.Column(db.DateTime(timezone=True), onupdate=func.now())
@@ -130,8 +131,9 @@ class Date(db.Model):
 class Review(db.Model):
     __tablename__='reviews_fact'
 
-    game_key = db.Column(GUID(), db.ForeignKey('game_dim.key'), nullable=False, primary_key = True, autoincrement = False)
-    user_key = db.Column(GUID(), db.ForeignKey('user_dim.key'), nullable=False, primary_key = True, autoincrement = False)
+    # Add on cascade on foreign key for cascade delete | if game is delete, all reviews related to the game is deleted 
+    game_key = db.Column(GUID(), db.ForeignKey('game_dim.key', ondelete="CASCADE"), nullable=False, primary_key = True, autoincrement = False)
+    user_key = db.Column(GUID(), db.ForeignKey('user_dim.key', ondelete="CASCADE"), nullable=False, primary_key = True, autoincrement = False)
     date_key = db.Column(db.Integer, db.ForeignKey('date_dim.key'), nullable=False, primary_key = True, autoincrement = False)
     rating = db.Column(db.Integer, nullable=False)
     review_content = db.Column(db.Text, nullable=False)
@@ -314,15 +316,16 @@ def index():
 def show_analysis():
     avg_rating = db.session.query(Game.name, func.avg(Review.rating).label('Average Rating'),func.count(Review.rating).label('Total Reviewers')).filter(Review.game_key == Game.key).group_by(Game.key, Game.name).order_by(func.avg(Review.rating).desc()).all()
 
-    avg_developer = db.session.query(Developer.name, func.avg(Review.rating).label('Average Rating')).filter(Review.game_key == Game.key, Game.developer_key == Developer.key, Review.date_key == Date.key, Date.month_name == 'May').group_by(Developer.key, Developer.name).order_by(func.avg(Review.rating).desc()).all()
+    avg_developer = db.session.query(Developer.name, func.avg(Review.rating).label('Average Rating')).filter(Review.game_key == Game.key, Game.developer_key == Developer.key, Review.date_key == Date.key, Date.month_name == 'June').group_by(Developer.key, Developer.name).order_by(func.avg(Review.rating).desc()).all()
 
-    month_total = db.session.query(Game.name, func.count(User.key).label('Total Reviewers')).filter(Review.game_key == Game.key, Review.user_key == User.key, Review.date_key == Date.key, Date.month_name == 'May').group_by(Game.key, Game.name).order_by(func.count(User.key).desc()).all()
+    month_total = db.session.query(Game.name, func.count(User.key).label('Total Reviewers')).filter(Review.game_key == Game.key, Review.user_key == User.key, Review.date_key == Date.key, Date.month_name == 'June').group_by(Game.key, Game.name).order_by(func.count(User.key).desc()).all()
 
     return render_template('analysis.html', avg_rating = avg_rating, avg_developer = avg_developer, month_total = month_total)
 
 
 if __name__ == '__main__':
+    # init_dates()
+    # complete_dates()
     # game_scrap = GameScrapper()
     # add_game()
-    # complete_dates()
     app.run(debug=True)
