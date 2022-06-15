@@ -325,7 +325,7 @@ def show_analysis():
 
 if __name__ == '__main__':
     # init_dates()
-    # complete_dates()
+    complete_dates()
     game_scrap = GameScrapper()
     add_game()
     # app.run(debug=True)
