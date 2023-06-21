@@ -40,18 +40,20 @@ Nevertheless, the data model can still serve its purpose.
 
 <h2> How it works </h2>
 <h4> Initialize environment </h4>
+
 As the project require a lot of package, a virtual environment is recommended to be used in the project. To use virtual environment, first we have to install it by typing `pip install virtualenv`. After the virtual environment has been installed, we can implement it to the project by typing `virtualenv env` in the cmd. A new folder named env will show up.
 
-To activate virtual env we have first to make sure the execution policy is unrestricted. So, we can type in the cmd `Set-ExecutionPolicy Unrestricted -Scope Process`. Then, we can start the virtual env by `./env/Scripts/activate.ps1` (windows). In the env terminal, we install the required packages by using `pip install -r requirements.txt`.
+To activate virtual env we have first to make sure the execution policy is unrestricted. So, we can type in the cmd `Set-ExecutionPolicy Unrestricted -Scope Process`. Then, we can start the virtual env by `./env/Scripts/activate.ps1` (windows). In the env terminal, we install the required packages by using `pip install -r requirements.txt`. The requirements are based on Python 3.9.6.
 
 <h4> Initialize database </h4>
+
 The database is first initialized. It can be done by creating the db with name "online_game" in MySQL. Next, we access the python terminal by typing `py` in the cmd. Then we type `from app import db` and then `db.create_all()`. The database schema should have been created in MySQL.
 
 <h4> Time table </h4>
 First the time table data is imported from .csv file by using pandas and insert it into MySQL database. The insertion is done per row. The current date used in this project (28 October 2021) only contains October 2021 dates only. However, it is possible to increase the date range by importing a .csv table that has more time range. The .csv can be imported by using the init_date(.csv file path) function in the app.py file.
 
 <h4> Game and review </h4>
-For the game and review tables, it can be inserted using creating GameScrapper object called game_scrapper and add_game() function in the app.py file. A steam game page link then can be inserted into the command line. The game scrapper then scrap the steam game and the game community hub review pages to retrieve the game, developer, category, user, and the review information.
+For the game and review tables, it can be inserted using creating GameScrapper object called game_scrapper and add_game() function in the app.py file. A steam game page link then can be inserted into the command line. Make sure the game has category in its page beforehand. The game scrapper then scrap the steam game and the game community hub review pages to retrieve the game, developer, category, user, and the review information.
 
 ![Add game and review](/static/game_scrap.png)
 
