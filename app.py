@@ -13,6 +13,7 @@ app = Flask(__name__)
 # Database-------------------------------
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root@localhost/online_game'
 db = SQLAlchemy(app)
+app.app_context().push()
 
 # UUID------------------------------------
 class GUID(TypeDecorator):
