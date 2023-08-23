@@ -13,7 +13,6 @@ app = Flask(__name__)
 # Database-------------------------------
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root@localhost/online_game'
 db = SQLAlchemy(app)
-app.app_context().push()
 
 # UUID------------------------------------
 class GUID(TypeDecorator):
@@ -174,7 +173,13 @@ def complete_dates():
     
     while(latest_date.date() < curr_date):
         latest_date = latest_date + datetime.timedelta(days=1)
-        new_row = Date(key = datetime.date.strftime(latest_date, '%Y%m%d'), year = latest_date.year, month=latest_date.month, month_name = latest_date.strftime("%B"), day = latest_date.day, day_of_week = latest_date.strftime("%A"), fulldate = latest_date.date())
+        new_row = Date(
+            key = datetime.date.strftime(latest_date, '%Y%m%d'), 
+            year = latest_date.year, month=latest_date.month, 
+            month_name = latest_date.strftime("%B"), 
+            day = latest_date.day, day_of_week = latest_date.strftime("%A"), 
+            fulldate = latest_date.date()
+            )
 
         try:
             db.session.add(new_row)
@@ -317,9 +322,9 @@ def index():
 def show_analysis():
     avg_rating = db.session.query(Game.name, func.avg(Review.rating).label('Average Rating'),func.count(Review.rating).label('Total Reviewers')).filter(Review.game_key == Game.key).group_by(Game.key, Game.name).order_by(func.avg(Review.rating).desc()).all()
 
-    avg_developer = db.session.query(Developer.name, func.avg(Review.rating).label('Average Rating')).filter(Review.game_key == Game.key, Game.developer_key == Developer.key, Review.date_key == Date.key, Date.month_name == 'June').group_by(Developer.key, Developer.name).order_by(func.avg(Review.rating).desc()).all()
+    avg_developer = db.session.query(Developer.name, func.avg(Review.rating).label('Average Rating')).filter(Review.game_key == Game.key, Game.developer_key == Developer.key, Review.date_key == Date.key, Date.month_name == 'August').group_by(Developer.key, Developer.name).order_by(func.avg(Review.rating).desc()).all()
 
-    month_total = db.session.query(Game.name, func.count(User.key).label('Total Reviewers')).filter(Review.game_key == Game.key, Review.user_key == User.key, Review.date_key == Date.key, Date.month_name == 'June').group_by(Game.key, Game.name).order_by(func.count(User.key).desc()).all()
+    month_total = db.session.query(Game.name, func.count(User.key).label('Total Reviewers')).filter(Review.game_key == Game.key, Review.user_key == User.key, Review.date_key == Date.key, Date.month_name == 'August').group_by(Game.key, Game.name).order_by(func.count(User.key).desc()).all()
 
     return render_template('analysis.html', avg_rating = avg_rating, avg_developer = avg_developer, month_total = month_total)
 

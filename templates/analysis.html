@@ -4,7 +4,7 @@
 {% block body %}
     <div class="content" style="margin-top: 86px; margin-right: 50px; margin-left: 50px;">
         <h1>Analysis Examples</h1>
-        <p>Since the project is only done in a short time period (no more than one week), the data retrieved by the web scrapper is only limited to data from April to June 2022. Thus, there might not be a big difference tables shown below.</p>
+        <p>Since the project is only done in a short time period (no more than one week), the data retrieved by the web scrapper is only limited to games from April 2022 to August 2023. The data are only added when the review is fetched manually. Thus, the data could be small depending on the data fetching frequency.</p>
         <br>
 
         <h3>Average Rating of All Time per Game</h3>
@@ -32,7 +32,7 @@
         </div>
         <br>
 
-        <h3>Average Developer Rating based on Ratings in June</h3>
+        <h3>Average Developer Rating based on Ratings in August 2023</h3>
         <div class="container-fluid">
             {% if avg_developer|length < 1 %}
                 <h3>There is no data available</h3>
@@ -55,7 +55,7 @@
         </div>
         <br>
 
-        <h3>Total Reviewers for Each Game in June</h3>
+        <h3>Total Reviewers for Each Game in August 2023</h3>
         <div class="container-fluid">
             {% if month_total|length < 1 %}
                 <h3>There is no data available</h3>
